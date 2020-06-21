@@ -10,7 +10,6 @@ import (
 
 func main() {
 	config.New()
-	body := "teste show pa"
 	configs := config.Get()
 
 	channel, err := pubsub.GetChannel(
