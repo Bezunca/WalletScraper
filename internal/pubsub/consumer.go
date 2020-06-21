@@ -8,7 +8,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func Listen(channel *amqp.Channel, queueName, body string) error {
+func Listen(channel *amqp.Channel, queueName string, callback func([]byte) string) error {
 	fmt.Println("setup listener")
 	fmt.Println(queueName)
 
@@ -27,11 +27,11 @@ func Listen(channel *amqp.Channel, queueName, body string) error {
 
 	done := make(chan error)
 
-	go handle(channel, deliveries, done)
+	go handle(channel, callback, deliveries, done)
 	return nil
 }
 
-func handle(channel *amqp.Channel, deliveries <-chan amqp.Delivery, done chan error) {
+func handle(channel *amqp.Channel, callback func([]byte) string, deliveries <-chan amqp.Delivery, done chan error) {
 	configs := config.Get()
 	fmt.Println("New message")
 	for d := range deliveries {
@@ -42,8 +42,8 @@ func handle(channel *amqp.Channel, deliveries <-chan amqp.Delivery, done chan er
 			d.Body,
 		)
 		d.Ack(false)
-
-		if err := Publish(channel, configs.ExchangeName, configs.PubQueueName, string(d.Body[:]), true); err != nil {
+		output := callback(d.Body)
+		if err := Publish(channel, configs.ExchangeName, configs.PubQueueName, output, true); err != nil {
 			log.Fatalf("%s", err)
 		}
 	}

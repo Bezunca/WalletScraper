@@ -2,6 +2,7 @@ package main
 
 import (
 	"WalletScraper/internal/config"
+	"WalletScraper/internal/processing"
 	"WalletScraper/internal/pubsub"
 	"fmt"
 	"log"
@@ -24,11 +25,7 @@ func main() {
 	}
 
 	fmt.Println("connection established")
-	if err := pubsub.Publish(channel, configs.ExchangeName, configs.PubQueueName, body, true); err != nil {
-		log.Fatalf("%s", err)
-	}
-	log.Printf("published %dB OK", len(body))
 
-	err = pubsub.Listen(channel, configs.SubQueueName, body)
+	err = pubsub.Listen(channel, configs.SubQueueName, processing.ScrapeCEI)
 	select {}
 }
