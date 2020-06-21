@@ -1,6 +1,7 @@
 package pubsub
 
 import (
+	"WalletScraper/internal/config"
 	"fmt"
 	"log"
 
@@ -26,11 +27,12 @@ func Listen(channel *amqp.Channel, queueName, body string) error {
 
 	done := make(chan error)
 
-	go handle(deliveries, done)
+	go handle(channel, deliveries, done)
 	return nil
 }
 
-func handle(deliveries <-chan amqp.Delivery, done chan error) {
+func handle(channel *amqp.Channel, deliveries <-chan amqp.Delivery, done chan error) {
+	configs := config.Get()
 	fmt.Println("New message")
 	for d := range deliveries {
 		log.Printf(
@@ -40,6 +42,10 @@ func handle(deliveries <-chan amqp.Delivery, done chan error) {
 			d.Body,
 		)
 		d.Ack(false)
+
+		if err := Publish(channel, configs.ExchangeName, configs.PubQueueName, string(d.Body[:]), true); err != nil {
+			log.Fatalf("%s", err)
+		}
 	}
 	log.Printf("handle: deliveries channel closed")
 	done <- nil

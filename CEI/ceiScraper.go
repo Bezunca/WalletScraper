@@ -28,4 +28,7 @@ func main() {
 		log.Fatalf("%s", err)
 	}
 	log.Printf("published %dB OK", len(body))
+
+	err = pubsub.Listen(channel, configs.SubQueueName, body)
+	select {}
 }
