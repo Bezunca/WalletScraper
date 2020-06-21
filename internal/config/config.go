@@ -16,7 +16,8 @@ type Config struct {
 	QueueUser       string `config:"queue-user;default=admin"`
 	QueuePassword   string `config:"queue-password;required"`
 	QueueSelfSigned bool   `config:"queue-self-signed;default=0"`
-	QueueName       string `config:"queue-name;required"`
+	PubQueueName    string `config:"pub-name;required"`
+	SubQueueName    string `config:"sub-name;required"`
 	ExchangeName    string `config:"exchange-name;required"`
 }
 
