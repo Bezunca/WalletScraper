@@ -1,28 +1,19 @@
 package config
 
 import (
-	"fmt"
 	"log"
 
+	"github.com/Bezunca/mongo_connection/config"
 	"github.com/fogodev/openvvar"
 )
 
 type Config struct {
 	Environment string `config:"environment;default=DEV;options=DEV, HOMO, PROD, UNK;description=Host environment (DEV, HOMO, PROD or UNK)."`
 	Debug       bool   `config:"debug;default=false"`
+	CAFile      string `config:"ca-file;required"`
 
-	QueueHost       string `config:"queue-host;default=localhost"`
-	QueuePort       string `config:"queue-port;default=27017"`
-	QueueUser       string `config:"queue-user;default=admin"`
-	QueuePassword   string `config:"queue-password;required"`
-	QueueSelfSigned bool   `config:"queue-self-signed;default=0"`
-	PubQueueName    string `config:"pub-name;required"`
-	SubQueueName    string `config:"sub-name;required"`
-	ExchangeName    string `config:"exchange-name;required"`
-}
-
-func (c *Config) QueueAddress(protocol string) string {
-	return fmt.Sprintf("%v://%v:%v@%v:%v/", protocol, c.QueueUser, c.QueuePassword, c.QueueHost, c.QueuePort)
+	MongoDB  config.MongoConfigs
+	RabbitMQ RabbitMQConfig
 }
 
 var globalConfig *Config = nil

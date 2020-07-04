@@ -316,3 +316,4 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains+all,go,macos,linux,windows,python
 *.crt
+certificates
