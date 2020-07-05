@@ -17,3 +17,7 @@ func (e *AlreadyClosedError) Error() string {
 func (e *ShutdownError) Error() string {
 	return "session is shutting down"
 }
+
+func (e *ShutdownError) MessageParseError() string {
+	return "Cannot Parse Received Data"
+}

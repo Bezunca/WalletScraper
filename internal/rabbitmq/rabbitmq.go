@@ -26,6 +26,10 @@ type Session struct {
 
 var globalSession *Session = nil
 
+func (session *Session) IsReady() bool{
+	return session.isReady
+}
+
 // New creates a new consumer state instance, and automatically
 // attempts to connect to the server.
 func New(
@@ -208,7 +212,7 @@ func (session *Session) Push(data []byte) error {
 			true,                        // Mandatory
 			false,                       // Immediate
 			amqp.Publishing{
-				ContentType: "text/plain",
+				ContentType: "application/json",
 				Body:        data,
 			},
 		)
@@ -224,7 +228,7 @@ func (session *Session) Push(data []byte) error {
 		select {
 		case confirm := <-session.notifyConfirm:
 			if confirm.Ack {
-				session.errorLog.Println("Push confirmed!")
+				log.Println("Push confirmed!")
 				return nil
 			}
 		case <-time.After(session.configs.ResendDelay):

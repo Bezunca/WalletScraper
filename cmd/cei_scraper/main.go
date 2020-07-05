@@ -8,6 +8,7 @@ import (
 	"crypto/x509"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/Bezunca/mongo_connection"
 )
@@ -41,5 +42,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	i := 0
+	for ;;i++{
+		<-time.After(1 * time.Second)
+		if rabbitMQ.IsReady(){
+			break
+		}
+		if i == 10{
+			log.Fatal("Cannot Connect to RMQ")
+		}
+	}
 	process.Run(rabbitMQ, mongoClient)
 }

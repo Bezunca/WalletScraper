@@ -1,7 +1,10 @@
 package config
 
 import (
+	"crypto/rsa"
 	"log"
+
+	internalRSA "WalletScraper/internal/rsa"
 
 	"github.com/Bezunca/mongo_connection/config"
 	"github.com/fogodev/openvvar"
@@ -14,6 +17,11 @@ type Config struct {
 
 	MongoDB  config.MongoConfigs
 	RabbitMQ RabbitMQConfig
+
+	ApplicationDatabase  string `config:"application-database;required"`
+
+	RSAPrivateKeyPath string `config:"rsa-private-key-path;required"`
+	RSAPasswordEncryptionKey *rsa.PrivateKey
 }
 
 var globalConfig *Config = nil
@@ -25,6 +33,12 @@ func New() *Config {
 			log.Fatalf("An error occurred for bad config reasons: %v", err)
 		}
 	}
+
+	privateKey, err := internalRSA.LoadPrivateKey(globalConfig.RSAPrivateKeyPath)
+	if err != nil {
+		log.Fatalf("Cannot Load Private Key: %v", err)
+	}
+	globalConfig.RSAPasswordEncryptionKey = privateKey
 
 	return globalConfig
 }
