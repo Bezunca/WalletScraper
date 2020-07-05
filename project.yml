@@ -1,0 +1,3 @@
+variables:
+  PROJECT_TAG: wallet_scraper
+  PROJECT_VERSION: 0.0.1
